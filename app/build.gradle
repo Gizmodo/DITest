@@ -1,0 +1,90 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.devtools.ksp' version '1.6.20-1.0.4'
+    id "org.jetbrains.kotlin.plugin.serialization"
+}
+
+android {
+    namespace 'ru.gizmodo.ditest'
+    compileSdkPreview "Tiramisu"
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
+    defaultConfig {
+        applicationId "ru.gizmodo.ditest"
+        minSdk 22
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjvm-default=all'] //enable or compatibility
+    }
+    buildToolsVersion '33.0.0 rc3'
+    ndkVersion '25.0.8355429 rc3'
+}
+
+dependencies {
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar"
+    debugImplementation "com.bugsnag:bugsnag-android:$bugsnag"
+//    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
+    implementation "androidx.appcompat:appcompat:$appcompat"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout"
+    implementation "androidx.core:core-ktx:$core_ktx"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-service:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle"
+    implementation "androidx.navigation:navigation-compose:$navigation"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-runtime:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "com.github.karczews:rx2-broadcast-receiver:$broadcast_receiver"
+    implementation "com.github.skydoves:sandwich:1.2.4"
+    implementation "com.google.android.material:material:$material"
+    implementation "com.google.code.gson:gson:$gson"
+    implementation "com.google.dagger:dagger-android-support:$dagger"
+    implementation "com.google.dagger:dagger-android:$dagger"
+    implementation "com.google.dagger:dagger:$dagger"
+    implementation "com.jakewharton.timber:timber:$timber"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxandroid"
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_json"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    kapt "com.google.dagger:dagger-android-processor:$dagger"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
+}
