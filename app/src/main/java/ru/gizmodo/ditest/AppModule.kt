@@ -20,24 +20,89 @@ class AppModule(private val application: Application) {
 }
 
 @Module
-class TestModule @Inject constructor(private val context: Context) {
+class SuperModule @Inject constructor(
+    private val context: Context,
+) {
+    @Provides
+    fun provideSuperData(): ReceiverLiveData2 = ReceiverLiveData2(context)
+}
+
+@Module
+class TestModule @Inject constructor(
+    private val context: Context,
+    private val data: String,
+//    private val data: String,
+) {
 
     @Provides
-    fun provideReceiver2(
-        filter: IntentFilter,
-    ): ReceiverLiveData {
-        return ReceiverLiveData(context, filter)
+    fun provideReceiver(): ReceiverLiveData = ReceiverLiveData(context, data)
+
+/*  @Provides
+      @Named("Settings")
+      fun provideIntentFilter(): IntentFilter = IntentFilter(data)*/
+}
+
+data class SuperResults(
+    val urovo: String,
+    val idata: String,
+    val isUrovoEnterPushed: Boolean,
+)
+
+class ReceiverLiveData2 @Inject constructor(
+    private val context: Context,
+) : MutableLiveData<SuperResults>() {
+
+    override fun onInactive() {
+        super.onInactive()
+        context.unregisterReceiver(urovoScannerReceiver)
+        context.unregisterReceiver(idataScannerReceiver)
+        context.unregisterReceiver(urovoKeyboardReceiver)
     }
 
-    @Provides
-    fun provideIntentFilter(): IntentFilter {
-        return IntentFilter("android.intent.ACTION_DECODE_DATA")
+    var superResults: SuperResults = SuperResults("", "", false)
+
+    override fun onActive() {
+        super.onActive()
+        //value = mapFunc.apply(context, Intent())
+        context.registerReceiver(urovoScannerReceiver,
+            IntentFilter("android.intent.ACTION_DECODE_DATA"))
+        context.registerReceiver(idataScannerReceiver,
+            IntentFilter("android.intent.action.SCANRESULT"))
+        context.registerReceiver(urovoKeyboardReceiver,
+            IntentFilter("android.intent.action_keyboard"))
+    }
+
+    private val urovoScannerReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            intent.extras?.let {
+                superResults = superResults.copy(urovo = it["barcode_string"].toString())
+                this@ReceiverLiveData2.value = superResults
+            }
+        }
+    }
+    private val idataScannerReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            intent.extras?.let {
+                superResults = superResults.copy(idata = it["value"].toString())
+                value = superResults
+            }
+        }
+    }
+    private val urovoKeyboardReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            intent.extras?.let {
+                superResults =
+                    superResults.copy(isUrovoEnterPushed = it["kbrd_enter"].toString() == "enter")
+                value = superResults
+            }
+        }
     }
 }
 
 class ReceiverLiveData @Inject constructor(
     private val context: Context,
-    private val filter: IntentFilter,
+    private val data: String,
+//    private val filter: IntentFilter,
 ) : MutableLiveData<String>() {
 
     override fun onInactive() {
@@ -48,14 +113,12 @@ class ReceiverLiveData @Inject constructor(
     override fun onActive() {
         super.onActive()
         //value = mapFunc.apply(context, Intent())
-        context.registerReceiver(mBroadcastReceiver, filter)
+        context.registerReceiver(mBroadcastReceiver, IntentFilter(data))
     }
 
     private val mBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            var data = ""
-            intent.extras?.let { data = it["barcode_string"].toString() }
-            value = data
+            intent.extras?.let { value = it["barcode_string"].toString() }
         }
     }
 }

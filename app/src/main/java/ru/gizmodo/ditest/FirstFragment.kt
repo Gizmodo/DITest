@@ -33,7 +33,6 @@ class FirstFragment : Fragment() {
     ): View? {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,9 +41,18 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
-        viewModel.urovoScanner.observe(viewLifecycleOwner) { it ->
+        viewModel.urovoScannerLiveData.observe(viewLifecycleOwner) { it ->
             binding.textviewFirst.text = it
             Log.d("666", it)
+        }
+
+        viewModel.superScannerLiveData.observe(viewLifecycleOwner) { it: SuperResults ->
+            Log.d("666", "Значения со слушателей: " + it.toString())
+            with(binding) {
+                txtUrovoKeyboard.text = it.isUrovoEnterPushed.toString()
+                txtIDataScanner.text = it.idata
+                txtUrovoScanner.text = it.urovo
+            }
         }
     }
 

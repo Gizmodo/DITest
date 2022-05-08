@@ -8,7 +8,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
-        TestModule::class
+        TestModule::class,
+        SuperModule::class
     ]
 )
 interface AppGraph {

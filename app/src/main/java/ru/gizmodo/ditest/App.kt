@@ -23,7 +23,8 @@ class App : Application() {
         appGraph = DaggerAppGraph
             .builder()
             .appModule(ru.gizmodo.ditest.AppModule(this))
-            .testModule(TestModule(this))
+            .testModule(TestModule(this, "android.intent.ACTION_DECODE_DATA"))
+            .superModule(SuperModule(this))
             .build()
     }
 }
